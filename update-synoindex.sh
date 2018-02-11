@@ -35,12 +35,17 @@
 # v1.06 corrected a bug with find parameters
 # v1.07 corrected a bug with log paths with spaces in config file
 
+[ "$DEBUG" == true ] && set -x
+
 
 #---------------------------------------------
 #function to set the environment
 #---------------------------------------------
 set_environment(){
-    ALL_EXT="ASF AVI DIVX FLV IMG ISO M1V M2P M2T M2TS M2V M4V MKV MOV MP4 MPEG4 MPE MPG MPG4 MTS QT RM TP TRP TS VOB WMV XVID"
+    ALL_EXT="JPG GIF PNG TIFF ASF AVI DIVX FLV IMG ISO M1V M2P M2T M2TS M2V M4V MKV MOV MP4 MPEG4 MPE MPG MPG4 MTS QT RM TP TRP TS VOB WMV XVID"
+    IMG_EXT="JPG GIF PNG TIFF"
+    VID_EXT="ASF AVI DIVX FLV IMG ISO M1V M2P M2T M2TS M2V M4V MKV MOV MP4 MPEG4 MPE MPG MPG4 MTS QT RM TP TRP TS VOB WMV XVID"
+    AUD_EXT="MP3 FLAC WAV AAC WMA"
 
     CONFIG_DIR=$(dirname $0)"/config"
     
@@ -116,6 +121,20 @@ check_extension(){
     return "$TREATABLE"
 }
 
+#---------------------------------------------
+#function to check the type based on extension
+#returns the table to look for files
+#---------------------------------------------
+check_extension_type(){
+    if echo "$VID_EXT" | grep -q "$FICH_EXT"; then
+        echo "video"
+    elif echo "$IMG_EXT" | grep -q "$FICH_EXT"; then
+        echo "photo"
+    elif echo "$AUD_EXT" | grep -q "$FICH_EXT"; then
+        echo "music"
+    fi
+}
+
 
 #---------------------------------------------
 #function to check if directory is in the DB
@@ -162,7 +181,10 @@ search_file_DB(){
     #replace "'" with "\'"
     FICH_MEDIA_SQL=${FICH_MEDIA_DB//"'"/"\'"}
 
-    TOTAL=`$PSQL_PATH mediaserver postgres -tA -c "select count(1) from video where lower(path) like '%$FICH_MEDIA_SQL%'"`
+    #which table do we need to look into?
+    SEARCH_TABLE=$(check_extension_type)
+
+    TOTAL=`$PSQL_PATH mediaserver postgres -tA -c "select count(1) from $SEARCH_TABLE where lower(path) like '%$FICH_MEDIA_SQL%'"`
 
     return "$TOTAL"
 }
