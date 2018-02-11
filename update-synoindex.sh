@@ -368,8 +368,10 @@ treatment(){
             RECURSIVE="-maxdepth $RECURSIVE"
         fi
 
+        NOT_EA="-not -path *@eaDir*"
+
         TYPEFIND="-type f"
-        FIND_PARAMETERS=($RECURSIVE $TIME_UPD $TYPEFIND $USER_OWN)
+        FIND_PARAMETERS=($RECURSIVE $TIME_UPD $TYPEFIND $USER_OWN $NOT_EA)
         PARAMETERS=$(find "$PATH_FILE" "${FIND_PARAMETERS[@]}")
 
         IFS=$'\n'
