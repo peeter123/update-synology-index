@@ -369,9 +369,10 @@ treatment(){
         fi
 
         NOT_EA="-not -path *@eaDir*"
+        NOT_SYNC="-not -path *.sync*"
 
         TYPEFIND="-type f"
-        FIND_PARAMETERS=($RECURSIVE $TIME_UPD $TYPEFIND $USER_OWN $NOT_EA)
+        FIND_PARAMETERS=($RECURSIVE $TIME_UPD $TYPEFIND $USER_OWN $NOT_EA $NOT_SYNC)
         PARAMETERS=$(find "$PATH_FILE" "${FIND_PARAMETERS[@]}")
 
         IFS=$'\n'
