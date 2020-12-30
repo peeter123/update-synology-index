@@ -60,6 +60,14 @@ set_environment(){
 
     FICH_CONF="$CONFIG_DIR/$CONFIG_FILE"
 
+    # Make it possible to override config file
+    if [[ ! -z "$1" ]] && [[ ! -f "$1" ]]; then
+        echo "Please supply a config file parameter..."
+        exit 1
+    elif [[ -f "$1" ]]; then
+        FICH_CONF="$1"
+    fi
+
     if [[ ! -f "$FICH_CONF" ]]; then
         #insert into file default values
         echo "#extensions
@@ -389,5 +397,5 @@ treatment(){
 #---------------------------------------------
 #main
 #---------------------------------------------
-set_environment
+set_environment $1
 treatment
